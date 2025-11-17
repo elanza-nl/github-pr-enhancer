@@ -2,7 +2,7 @@
 
 A Chrome extension that displays reviewers directly in the GitHub Pull Request list view.
 
-[Chrome Web Store / github-show-reviewer](https://chromewebstore.google.com/detail/github-show-reviewer/oiooodcehfplbgnamghfcnklebcdohhd?authuser=0&hl=ja)
+[Chrome Web Store / github-show-reviewer](https://chromewebstore.google.com/detail/github-show-reviewer/oiooodcehfplbgnamghfcnklebcdohhd?authuser=0&hl=en)
 
 ![Reviwer List](docs/show_reviewer_list.png)
 
@@ -19,7 +19,7 @@ A Chrome extension that displays reviewers directly in the GitHub Pull Request l
 ## Installation
 
 **Chrome Web Store:**  
-[Chrome Web Store / github-show-reviewer](https://chromewebstore.google.com/detail/github-show-reviewer/oiooodcehfplbgnamghfcnklebcdohhd?authuser=0&hl=ja)
+[Chrome Web Store / github-show-reviewer](https://chromewebstore.google.com/detail/github-show-reviewer/oiooodcehfplbgnamghfcnklebcdohhd?authuser=0&hl=en)
 
 **For Developers:**
 
