@@ -4,44 +4,26 @@
   font-weight: normal;
 }
 
-/* 他の issue-meta-section と同じように、アイコンを表示 */
 .github-show-reviewer svg {
   vertical-align: text-bottom;
   margin-right: 4px;
 }
 
-/* .github-show-reviewer--success {
-  color: var(--fgColor-success, #1a7f37);
-} */
-
-/* Reviewer: の部分をグレー色で表示 */
-/* .github-show-reviewer strong {
-  color: var(--fgColor-muted, #656d76);
-  font-weight: normal;
-} */
-/* 太字の場合 */
-/* font-weight: 600; */
-
-/* レビュワーリンクのスタイル（通常はグレー、ホバー時に青色） */
 .reviewer-link {
   color: var(--fgColor-muted, #656d76);
-  /* text-decoration: none; */
   text-decoration: underline;
   cursor: pointer;
 }
 
 .reviewer-link:hover {
   color: var(--fgColor-accent, #0969da);
-  /* text-decoration: none; */
   text-decoration: underline;
 }
 
-/* None の場合はグレー色で表示 */
 .reviewer-none {
   color: var(--fgColor-muted, #656d76);
 }
 
-/* N/A の場合は赤色で表示 */
 .reviewer-na {
   color: var(--fgColor-danger, #cf222e);
 }
