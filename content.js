@@ -354,6 +354,21 @@
     return filterBar;
   }
 
+  function hasPendingReviews(reviewer) {
+    // Check all rows to see if this reviewer has any pending reviews
+    const rows = document.querySelectorAll(ROW_SELECTOR);
+    for (const row of rows) {
+      const reviewers = rowReviewerData.get(row);
+      if (!reviewers) continue;
+      
+      const match = reviewers.find(r => r.login === reviewer.login && r.isTeam === reviewer.isTeam);
+      if (match && match.state !== 'APPROVED' && match.state !== 'CHANGES_REQUESTED') {
+        return true;
+      }
+    }
+    return false;
+  }
+
   function renderFilterBar() {
     const bar = ensureFilterBar();
     if (!bar) return;
@@ -364,7 +379,14 @@
 
     bar.innerHTML = '<span class="reviewer-filter-label">Pending reviews by:</span>';
 
+    let hasVisibleReviewers = false;
     for (const reviewer of sorted) {
+      // Only show reviewers that have pending reviews
+      if (!hasPendingReviews(reviewer)) {
+        continue;
+      }
+      
+      hasVisibleReviewers = true;
       const isActive = activeFilter && activeFilter.login === reviewer.login && activeFilter.isTeam === reviewer.isTeam;
       if (reviewer.isTeam) {
         const btn = document.createElement('button');
@@ -387,7 +409,7 @@
       }
     }
 
-    bar.style.display = allReviewers.size > 0 ? 'flex' : 'none';
+    bar.style.display = hasVisibleReviewers ? 'flex' : 'none';
   }
 
   function toggleFilter(login, isTeam) {
