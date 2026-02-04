@@ -166,8 +166,6 @@
     const reviewsUrl = `${pullUrl}/reviews`;
 
     try {
-      console.log(`[GitHub Show Reviewer] Fetching PR #${prNumber}`);
-
       const headers = await getApiHeaders();
       const [pullResponse, reviewsResponse] = await Promise.all([
         fetch(pullUrl, { headers }),
@@ -234,7 +232,6 @@
         state: review.state.toUpperCase(),
         isTeam: false
       }));
-      console.log('reviewedUsers', reviewedUsers);
 
       // Deduplicate by login
       const combined = [...requestedUsers, ...requestedTeams, ...reviewedUsers];

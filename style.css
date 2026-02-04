@@ -9,17 +9,6 @@
   margin-right: 4px;
 }
 
-.reviewer-link {
-  color: var(--fgColor-muted, #656d76);
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.reviewer-link:hover {
-  color: var(--fgColor-accent, #0969da);
-  text-decoration: underline;
-}
-
 .reviewer-none {
   color: var(--fgColor-muted, #656d76);
 }
