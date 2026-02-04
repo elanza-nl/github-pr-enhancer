@@ -383,14 +383,14 @@
       const isActive = activeFilter && activeFilter.login === reviewer.login && activeFilter.isTeam === reviewer.isTeam;
       
       if (reviewer.isTeam) {
-        htmlContent += `<button class="reviewer-filter-team tooltipped tooltipped-s${isActive ? ' reviewer-filter-team--active' : ''}" aria-label="@${reviewer.login}" onclick="window.githubShowReviewerToggleFilter('${reviewer.login}', true)">
+        htmlContent += `<button class="reviewer-filter-team tooltipped tooltipped-s${isActive ? ' reviewer-filter-team--active' : ''}" aria-label="@${reviewer.login}">
           <svg aria-hidden="true" height="16" viewBox="0 0 16 16" width="16" class="octicon octicon-people">
             <path d="M2 5.5a3.5 3.5 0 1 1 5.898 2.549 5.508 5.508 0 0 1 3.034 4.084.75.75 0 1 1-1.482.235 4 4 0 0 0-7.9 0 .75.75 0 0 1-1.482-.236A5.507 5.507 0 0 1 3.102 8.05 3.493 3.493 0 0 1 2 5.5ZM11 4a3.001 3.001 0 0 1 2.22 5.018 5.01 5.01 0 0 1 2.56 3.012.749.749 0 0 1-.885.954.752.752 0 0 1-.549-.514 3.507 3.507 0 0 0-2.522-2.372.75.75 0 0 1-.574-.73v-.352a.75.75 0 0 1 .416-.672A1.5 1.5 0 0 0 11 5.5.75.75 0 0 1 11 4Zm-5.5-.5a2 2 0 1 0-.001 3.999A2 2 0 0 0 5.5 3.5Z"></path>
           </svg>
         </button>`;
       } else {
         const avatarUrl = reviewer.avatarUrl || `https://github.com/${reviewer.login}.png?size=40`;
-        htmlContent += `<button class="reviewer-filter-avatar tooltipped tooltipped-s${isActive ? ' reviewer-filter-avatar--active' : ''}" aria-label="${reviewer.login}" onclick="window.githubShowReviewerToggleFilter('${reviewer.login}', false)">
+        htmlContent += `<button class="reviewer-filter-avatar tooltipped tooltipped-s${isActive ? ' reviewer-filter-avatar--active' : ''}" aria-label="${reviewer.login}">
           <img src="${avatarUrl}" alt="${reviewer.login}" loading="lazy">
         </button>`;
       }
@@ -503,9 +503,6 @@
   });
 
   initializeExtension();
-
-  // Expose toggleFilter globally for onclick handlers
-  window.githubShowReviewerToggleFilter = toggleFilter;
   
   // Custom tooltip system
   let tooltip = null;
@@ -551,13 +548,17 @@
     }
   }
   
-  // Add tooltip event listeners to filter bar
+  // Add tooltip and click event listeners to filter bar
   function setupTooltips() {
     const bar = ensureFilterBar();
     if (!bar) return;
     
     const elements = bar.querySelectorAll('[aria-label]');
-    elements.forEach(element => {
+    
+    elements.forEach((element) => {
+      const ariaLabel = element.getAttribute('aria-label');
+      
+      // Setup tooltips
       element.addEventListener('mouseenter', (e) => {
         const text = e.target.getAttribute('aria-label');
         if (text) {
@@ -566,6 +567,13 @@
       });
       
       element.addEventListener('mouseleave', hideTooltip);
+      
+      // Setup click handlers
+      element.addEventListener('click', (e) => {
+        const isTeam = ariaLabel.startsWith('@');
+        const login = isTeam ? ariaLabel.substring(1) : ariaLabel;
+        toggleFilter(login, isTeam);
+      });
     });
   }
   
