@@ -67,11 +67,13 @@
 
 /* Review state rings */
 .reviewer-state-approved .reviewer-avatar {
-  box-shadow: 0 0 0 2px #2ea043;
+  outline: 2px solid #2ea043;
+  outline-offset: -2px;
 }
 
 .reviewer-state-changes-requested .reviewer-avatar {
-  box-shadow: 0 0 0 2px #d29922;
+  outline: 2px solid #d29922;
+  outline-offset: -2px;
 }
 
 /* Team badge styles */
