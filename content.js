@@ -38,7 +38,7 @@
         headers.Authorization = `Bearer ${result.githubToken}`;
       }
     } catch (error) {
-      console.error('[GitHub Show Reviewer] Failed to get token from storage:', error);
+      console.error('[GitHub PR Enhancer] Failed to get token from storage:', error);
     }
 
     return headers;
@@ -174,7 +174,7 @@
 
       if (!pullResponse.ok) {
         const errorText = await pullResponse.text();
-        console.error(`[GitHub Show Reviewer] API Error:`, errorText);
+        console.error(`[GitHub PR Enhancer] API Error:`, errorText);
         throw new Error(`GitHub API error ${pullResponse.status}: ${errorText.substring(0, 100)}`);
       }
 

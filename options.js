@@ -18,9 +18,9 @@ document.getElementById('save').addEventListener('click', async () => {
     return;
   }
 
-  // トークンの形式チェック（旧:ghp_, 新:github_pat_）
-  if (!token.startsWith('ghp_') && !token.startsWith('github_pat_') && token.length < 40) {
-    showStatus('error', 'Invalid token format. Please enter a valid GitHub Personal Access Token.');
+  // トークンの形式チェック（github_pat_ のみ受付）
+  if (!token.startsWith('github_pat_')) {
+    showStatus('error', 'Invalid token format. Please enter a valid GitHub fine-grained Personal Access Token (starts with github_pat_).');
     return;
   }
 

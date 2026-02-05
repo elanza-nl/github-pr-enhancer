@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GitHub Show Reviewer - Settings</title>
+  <title>GitHub PR Enhancer - Settings</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
@@ -35,7 +35,10 @@
     }
 
     .form-group {
+      border-top: 1px solid #d0d7de;
       margin-bottom: 16px;
+      padding-top: 24px;
+      margin-top: 24px;
     }
 
     label {
@@ -131,12 +134,6 @@
       display: block;
     }
 
-    .instructions {
-      border-top: 1px solid #d0d7de;
-      padding-top: 24px;
-      margin-top: 24px;
-    }
-
     .instructions h2 {
       font-size: 16px;
       font-weight: 600;
@@ -166,18 +163,33 @@
 
 <body>
   <div class="container">
-    <h1>GitHub Show Reviewer Settings</h1>
+    <h1>GitHub PR Enhancer Settings</h1>
     <p class="description">
-      Configure your GitHub Personal Access Token to access the GitHub API. <br>
-      <a href="https://github.com/settings/tokens/new?scopes=repo&description=GitHub%20Show%20Reviewer&default_expires_at=none"
+      Configure your GitHub fine-grained personal access token to access the GitHub API. <br>
+      <a href="https://github.com/settings/personal-access-tokens/new"
         target="_blank" class="token-link">
         Create a token here
       </a>
     </p>
 
+    <div class="instructions">
+      <h2>📝 How to Create a Token</h2>
+      <ol>
+        <li>Click "Create a token here" link above.</li>
+        <li>Give the token a name (e.g. <code>GitHub PR Enhancer</code>).</li>
+        <li>Under "Resource owner", select the person or organization this extension will have access to.</li>
+        <li>Under "Expiration", select a date less than a year from now.</li>
+        <li>Under "Repository access", select the repositories this extension will be used on (or "All repositories").</li>
+        <li>Under "Permissions", click "+ Add permissions" and select <code>Pull requests</code>.</li>
+        <li>Click "Generate token".</li>
+        <li>Copy the token (starts with <code>github_pat_</code>).</li>
+        <li>Paste it above and click "Save".</li>
+      </ol>
+    </div>
+
     <div class="form-group">
-      <label for="token">GitHub Personal Access Token</label>
-      <input type="password" id="token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+      <label for="token">GitHub Fine-grained Personal Access Token</label>
+      <input type="password" id="token" placeholder="github_pat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
       <div class="hint">
         Your token will be securely stored.
       </div>
@@ -186,16 +198,6 @@
     <button id="save">Save</button>
 
     <div id="status" class="status"></div>
-
-    <div class="instructions">
-      <h2>📝 How to Create a Token</h2>
-      <ol>
-        <li>Click "Create a token here" link above</li>
-        <li>Click "Generate token" (the <code>repo</code> scope is already selected)</li>
-        <li>Copy the token (starts with <code>ghp_</code>)</li>
-        <li>Paste it above and click "Save"</li>
-      </ol>
-    </div>
   </div>
 
   <script src="options.js"></script>

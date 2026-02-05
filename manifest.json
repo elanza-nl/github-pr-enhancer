@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "GitHub Show Reviewer",
-  "version": "1.0.2",
-  "description": "Display reviewer in GitHub PR list view.",
+  "name": "GitHub PR Enhancer",
+  "version": "2.0.0",
+  "description": "Display reviewers in GitHub PR list view, and allow filtering by pending reviews.",
   "permissions": [
     "storage"
   ],

@@ -1,4 +1,4 @@
-# GitHub Show Reviewer
+# GitHub PR Enchancer
 
 A Chrome extension that displays reviewers directly in the GitHub Pull Request list view.
 
@@ -40,7 +40,7 @@ For private repositories or to increase API rate limits, you need to configure y
 ![Settings Page](docs/github_access_token_setting.png)
 
 5. Click "Create a token here" link
-6. GitHub's "New personal access token (classic)" page will open
-7. Check the `repo` scope (required for private repositories)
+6. GitHub's fine-grained token creation page will open
+7. Give the token a name, select the repositories it will be used on, and under Permissions set `Pull requests` to `Read`
 8. Generate the token and copy it
 9. Paste the token in the input field and click "Save"
