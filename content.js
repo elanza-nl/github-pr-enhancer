@@ -70,7 +70,7 @@
     let reviewerSpan = inlineFlexContainer.querySelector(`.${SPAN_CLASS}`);
     if (!reviewerSpan) {
       reviewerSpan = document.createElement('span');
-      reviewerSpan.className = `${SPAN_CLASS} issue-meta-section ml-1`;
+      reviewerSpan.className = `${SPAN_CLASS} issue-meta-section`;
     }
     inlineFlexContainer.appendChild(reviewerSpan);
 
