@@ -254,7 +254,7 @@
       return `<span class="deployment-badge ${stateClass} tooltipped tooltipped-s" aria-label="${tooltip}">${abbrevName}</span>`;
     });
 
-    return `<span class="deployment-badges-container">${badges.join('')}</span>`;
+    return `<span class="reviewer-separator">•</span><span class="deployment-badges-container">${badges.join('')}</span>`;
   }
 
   // Fetch reviewers from GitHub API
