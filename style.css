@@ -234,10 +234,12 @@
   white-space: nowrap;
   cursor: default;
   transition: transform 0.15s;
+  position: relative;
 }
 
 .deployment-badge:hover {
   transform: scale(1.05);
+  z-index: 100;
 }
 
 /* Deployment status colors */

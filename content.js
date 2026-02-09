@@ -633,14 +633,14 @@
     const tooltip = createTooltip();
     tooltip.textContent = text;
     tooltip.classList.add('visible');
-    
+
     const rect = element.getBoundingClientRect();
     const tooltipRect = tooltip.getBoundingClientRect();
-    
+
     // Position tooltip above the element
     let top = rect.top - tooltipRect.height - 8;
     let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
-    
+
     // Keep tooltip within viewport
     if (top < 0) {
       top = rect.bottom + 8;
@@ -651,7 +651,7 @@
     if (left + tooltipRect.width > window.innerWidth) {
       left = window.innerWidth - tooltipRect.width - 8;
     }
-    
+
     tooltip.style.top = `${top + window.scrollY}px`;
     tooltip.style.left = `${left + window.scrollX}px`;
   }
@@ -666,12 +666,12 @@
   function setupTooltips() {
     const bar = ensureFilterBar();
     if (!bar) return;
-    
+
     const elements = bar.querySelectorAll('[aria-label]');
-    
+
     elements.forEach((element) => {
       const ariaLabel = element.getAttribute('aria-label');
-      
+
       // Setup tooltips
       element.addEventListener('mouseenter', (e) => {
         const text = e.target.getAttribute('aria-label');
@@ -679,9 +679,9 @@
           showTooltip(e.target, text);
         }
       });
-      
+
       element.addEventListener('mouseleave', hideTooltip);
-      
+
       // Setup click handlers
       element.addEventListener('click', () => {
         const isTeam = ariaLabel.startsWith('@');
@@ -690,4 +690,5 @@
       });
     });
   }
+
 })();
