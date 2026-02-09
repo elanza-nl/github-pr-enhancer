@@ -188,10 +188,13 @@
             const statuses = await statusResponse.json();
             const latestStatus = Array.isArray(statuses) && statuses.length > 0 ? statuses[0] : null;
 
+            const state = latestStatus ? latestStatus.state : 'pending';
             return {
               environment: deployment.environment,
-              state: latestStatus ? latestStatus.state : 'pending',
-              updatedAt: latestStatus ? latestStatus.updated_at : deployment.created_at,
+              state,
+              deployedAt: deployment.created_at,
+              // For inactive deployments, track when it was superseded
+              supersededAt: state === 'inactive' && latestStatus ? latestStatus.updated_at : null,
             };
           } catch {
             return null;
@@ -249,7 +252,12 @@
     const badges = deployments.map((deployment) => {
       const abbrevName = abbreviateEnvName(deployment.environment);
       const stateClass = `deployment-badge--${deployment.state}`;
-      const tooltip = `${deployment.environment}: ${deployment.state} (${formatRelativeTime(deployment.updatedAt)})`;
+      let tooltip;
+      if (deployment.state === 'inactive' && deployment.supersededAt) {
+        tooltip = `${deployment.environment}: deployed ${formatRelativeTime(deployment.deployedAt)}, superseded ${formatRelativeTime(deployment.supersededAt)}`;
+      } else {
+        tooltip = `${deployment.environment}: ${deployment.state} (${formatRelativeTime(deployment.deployedAt)})`;
+      }
 
       return `<span class="deployment-badge ${stateClass} tooltipped tooltipped-s" aria-label="${tooltip}">${abbrevName}</span>`;
     });
