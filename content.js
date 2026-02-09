@@ -156,6 +156,107 @@
     return lowerLogin.includes('bot') || lowerLogin === 'renovate' || lowerLogin === 'github-actions';
   }
 
+  // Fetch deployments for a specific SHA
+  // API endpoints:
+  // - Deployments: GET /repos/{owner}/{repo}/deployments?sha={sha}
+  // - Deployment statuses: GET /repos/{owner}/{repo}/deployments/{deployment_id}/statuses
+  async function fetchDeployments(headSha) {
+    const deploymentsUrl = `https://api.github.com/repos/${repoInfo.owner}/${repoInfo.repo}/deployments?sha=${headSha}&per_page=10`;
+
+    try {
+      const headers = await getApiHeaders();
+      const deploymentsResponse = await fetch(deploymentsUrl, { headers });
+
+      if (!deploymentsResponse.ok) {
+        return [];
+      }
+
+      const deployments = await deploymentsResponse.json();
+      if (!Array.isArray(deployments) || deployments.length === 0) {
+        return [];
+      }
+
+      // Fetch latest status for each deployment (in parallel)
+      const deploymentResults = await Promise.all(
+        deployments.map(async (deployment) => {
+          const statusUrl = `https://api.github.com/repos/${repoInfo.owner}/${repoInfo.repo}/deployments/${deployment.id}/statuses?per_page=1`;
+          try {
+            const statusResponse = await fetch(statusUrl, { headers });
+            if (!statusResponse.ok) {
+              return null;
+            }
+            const statuses = await statusResponse.json();
+            const latestStatus = Array.isArray(statuses) && statuses.length > 0 ? statuses[0] : null;
+
+            return {
+              environment: deployment.environment,
+              state: latestStatus ? latestStatus.state : 'pending',
+              updatedAt: latestStatus ? latestStatus.updated_at : deployment.created_at,
+            };
+          } catch {
+            return null;
+          }
+        })
+      );
+
+      // Filter out nulls and deduplicate by environment (keep most recent)
+      const envMap = new Map();
+      for (const result of deploymentResults) {
+        if (result && !envMap.has(result.environment)) {
+          envMap.set(result.environment, result);
+        }
+      }
+
+      return Array.from(envMap.values());
+    } catch (error) {
+      console.error('[GitHub PR Enhancer] Deployments fetch error:', error);
+      return [];
+    }
+  }
+
+  // Abbreviate environment names for display
+  function abbreviateEnvName(name) {
+    const abbrevMap = {
+      'production': 'prod',
+      'staging': 'stg',
+      'development': 'dev',
+    };
+    const lower = name.toLowerCase();
+    return abbrevMap[lower] || (name.length > 10 ? name.substring(0, 8) + '…' : name);
+  }
+
+  // Format relative time for tooltip
+  function formatRelativeTime(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${diffDays}d ago`;
+  }
+
+  // Format deployment badges HTML
+  function formatDeploymentBadges(deployments) {
+    if (!deployments || deployments.length === 0) {
+      return '';
+    }
+
+    const badges = deployments.map((deployment) => {
+      const abbrevName = abbreviateEnvName(deployment.environment);
+      const stateClass = `deployment-badge--${deployment.state}`;
+      const tooltip = `${deployment.environment}: ${deployment.state} (${formatRelativeTime(deployment.updatedAt)})`;
+
+      return `<span class="deployment-badge ${stateClass} tooltipped tooltipped-s" aria-label="${tooltip}">${abbrevName}</span>`;
+    });
+
+    return `<span class="deployment-badges-container">${badges.join('')}</span>`;
+  }
+
   // Fetch reviewers from GitHub API
   // API endpoints:
   // - Pull request details: GET /repos/{owner}/{repo}/pulls/{prNumber}
@@ -178,6 +279,10 @@
       }
 
       const pullData = await pullResponse.json();
+      const headSha = pullData.head?.sha;
+
+      // Fetch deployments in parallel with processing reviewers
+      const deploymentsPromise = headSha ? fetchDeployments(headSha) : Promise.resolve([]);
 
       // Extract requested reviewers (excluding bots)
       const requestedUsers = Array.isArray(pullData.requested_reviewers)
@@ -244,7 +349,9 @@
         }
       }
 
-      return { reviewers };
+      const deployments = await deploymentsPromise;
+
+      return { reviewers, deployments };
     } catch (error) {
       return { error: error.message || 'Unknown error' };
     }
@@ -272,7 +379,7 @@
     const promise = fetchReviewers(prNumber);
     rowPromises.set(row, promise);
 
-    promise.then(({ reviewers, error }) => {
+    promise.then(({ reviewers, deployments, error }) => {
       if (rowPromises.get(row) !== promise) {
         return;
       }
@@ -283,7 +390,8 @@
         return;
       }
 
-      setSpanText(infoSpan, formatReviewerAvatars(reviewers), false);
+      const deploymentBadgesHtml = formatDeploymentBadges(deployments);
+      setSpanText(infoSpan, deploymentBadgesHtml + formatReviewerAvatars(reviewers), false);
       infoSpan.removeAttribute('title');
       rowReviewerData.set(row, reviewers);
       let barChanged = false;

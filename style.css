@@ -29,7 +29,7 @@
   align-items: center;
   gap: 4px;
   line-height: 20px;
-  vertical-align: middle;
+  vertical-align: top;
   margin-bottom: 2px;
 }
 
@@ -37,7 +37,7 @@
   display: inline-block;
   line-height: 0;
   text-decoration: none;
-  vertical-align: middle;
+  vertical-align: top;
 }
 
 .reviewer-avatar {
@@ -213,4 +213,72 @@
 
 .github-show-reviewer-tooltip.visible {
   opacity: 1;
+}
+
+/* Deployment badges */
+.deployment-badges-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.deployment-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: default;
+  transition: transform 0.15s;
+}
+
+.deployment-badge:hover {
+  transform: scale(1.05);
+}
+
+/* Deployment status colors */
+.deployment-badge--success {
+  background: var(--bgColor-success-muted, #dafbe1);
+  color: var(--fgColor-success, #1a7f37);
+  border: 1px solid var(--borderColor-success-muted, #aceebb);
+}
+
+.deployment-badge--pending,
+.deployment-badge--queued {
+  background: var(--bgColor-attention-muted, #fff8c5);
+  color: var(--fgColor-attention, #9a6700);
+  border: 1px solid var(--borderColor-attention-muted, #f0db66);
+}
+
+.deployment-badge--in_progress {
+  background: var(--bgColor-attention-muted, #fff8c5);
+  color: var(--fgColor-attention, #9a6700);
+  border: 1px solid var(--borderColor-attention-muted, #f0db66);
+  animation: deployment-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes deployment-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.deployment-badge--failure,
+.deployment-badge--error {
+  background: var(--bgColor-danger-muted, #ffebe9);
+  color: var(--fgColor-danger, #cf222e);
+  border: 1px solid var(--borderColor-danger-muted, #ffcecb);
+}
+
+.deployment-badge--inactive {
+  background: var(--bgColor-muted, #f6f8fa);
+  color: var(--fgColor-muted, #656d76);
+  border: 1px solid var(--borderColor-default, #d0d7de);
 }
