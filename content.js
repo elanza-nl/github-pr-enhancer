@@ -462,7 +462,7 @@
 
     filterBar.addEventListener('click', (e) => {
       const el = e.target.closest('[aria-label]');
-      if (!el) return;
+      if (!el || !filterBar.contains(el)) return;
       const ariaLabel = el.getAttribute('aria-label');
       const isTeam = ariaLabel.startsWith('@');
       const login = isTeam ? ariaLabel.substring(1) : ariaLabel;
@@ -471,14 +471,14 @@
 
     filterBar.addEventListener('mouseenter', (e) => {
       const el = e.target.closest('[aria-label]');
-      if (!el) return;
+      if (!el || !filterBar.contains(el)) return;
       const text = el.getAttribute('aria-label');
       if (text) showTooltip(el, text);
     }, true);
 
     filterBar.addEventListener('mouseleave', (e) => {
       const el = e.target.closest('[aria-label]');
-      if (!el) return;
+      if (!el || !filterBar.contains(el)) return;
       hideTooltip();
     }, true);
 
