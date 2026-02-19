@@ -459,6 +459,29 @@
     filterBar.className = 'github-show-reviewer-filter pl-3';
     filterBar.style.display = 'none';
     firstRow.parentNode.insertBefore(filterBar, firstRow);
+
+    filterBar.addEventListener('click', (e) => {
+      const el = e.target.closest('[aria-label]');
+      if (!el) return;
+      const ariaLabel = el.getAttribute('aria-label');
+      const isTeam = ariaLabel.startsWith('@');
+      const login = isTeam ? ariaLabel.substring(1) : ariaLabel;
+      toggleFilter(login, isTeam);
+    });
+
+    filterBar.addEventListener('mouseenter', (e) => {
+      const el = e.target.closest('[aria-label]');
+      if (!el) return;
+      const text = el.getAttribute('aria-label');
+      if (text) showTooltip(el, text);
+    }, true);
+
+    filterBar.addEventListener('mouseleave', (e) => {
+      const el = e.target.closest('[aria-label]');
+      if (!el) return;
+      hideTooltip();
+    }, true);
+
     return filterBar;
   }
 
@@ -511,7 +534,6 @@
 
     bar.innerHTML = htmlContent;
     bar.style.display = hasVisibleReviewers ? 'flex' : 'none';
-    setTimeout(setupTooltips, 100);
   }
 
   function toggleFilter(login, isTeam) {
@@ -662,33 +684,5 @@
     }
   }
   
-  // Add tooltip and click event listeners to filter bar
-  function setupTooltips() {
-    const bar = ensureFilterBar();
-    if (!bar) return;
-
-    const elements = bar.querySelectorAll('[aria-label]');
-
-    elements.forEach((element) => {
-      const ariaLabel = element.getAttribute('aria-label');
-
-      // Setup tooltips
-      element.addEventListener('mouseenter', (e) => {
-        const text = e.target.getAttribute('aria-label');
-        if (text) {
-          showTooltip(e.target, text);
-        }
-      });
-
-      element.addEventListener('mouseleave', hideTooltip);
-
-      // Setup click handlers
-      element.addEventListener('click', () => {
-        const isTeam = ariaLabel.startsWith('@');
-        const login = isTeam ? ariaLabel.substring(1) : ariaLabel;
-        toggleFilter(login, isTeam);
-      });
-    });
-  }
 
 })();
