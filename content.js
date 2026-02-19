@@ -410,7 +410,7 @@
           barChanged = true;
         }
       }
-      if (barChanged) renderFilterBar();
+      renderFilterBar();
       if (activeFilter) filterRow(row);
     });
     promise.finally(() => {
