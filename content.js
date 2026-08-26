@@ -485,19 +485,20 @@
     return filterBar;
   }
 
-  function hasPendingReviews(reviewer) {
-    // Check all rows to see if this reviewer has any pending reviews
+  function countPendingReviews(reviewer) {
+    // Count all rows where this reviewer still has a pending review
     const rows = document.querySelectorAll(ROW_SELECTOR);
+    let count = 0;
     for (const row of rows) {
       const reviewers = rowReviewerData.get(row);
       if (!reviewers) continue;
-      
+
       const match = reviewers.find(r => r.login === reviewer.login && r.isTeam === reviewer.isTeam);
       if (match && match.state !== 'APPROVED' && match.state !== 'CHANGES_REQUESTED') {
-        return true;
+        count++;
       }
     }
-    return false;
+    return count;
   }
 
   function renderFilterBar() {
@@ -513,21 +514,23 @@
 
     for (const reviewer of sorted) {
       // Only show reviewers that have pending reviews
-      if (!hasPendingReviews(reviewer)) {
+      const pendingCount = countPendingReviews(reviewer);
+      if (pendingCount === 0) {
         continue;
       }
 
       hasVisibleReviewers = true;
       const isActive = activeFilter && activeFilter.login === reviewer.login && activeFilter.isTeam === reviewer.isTeam;
+      const countBadge = `<span class="reviewer-filter-count">${pendingCount > 99 ? '99+' : pendingCount}</span>`;
 
       if (reviewer.isTeam) {
         htmlContent += `<button class="reviewer-filter-team tooltipped tooltipped-s${isActive ? ' reviewer-filter-team--active' : ''}" aria-label="@${reviewer.login}">
-          ${TEAM_ICON}
+          ${TEAM_ICON}${countBadge}
         </button>`;
       } else {
         const avatarUrl = reviewer.avatarUrl || `https://github.com/${reviewer.login}.png?size=40`;
         htmlContent += `<button class="reviewer-filter-avatar tooltipped tooltipped-s${isActive ? ' reviewer-filter-avatar--active' : ''}" aria-label="${reviewer.login}">
-          <img src="${avatarUrl}" alt="${reviewer.login}" loading="lazy">
+          <img src="${avatarUrl}" alt="${reviewer.login}" loading="lazy">${countBadge}
         </button>`;
       }
     }
