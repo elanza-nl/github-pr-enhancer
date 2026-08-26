@@ -456,7 +456,7 @@
     const firstRow = document.querySelector(ROW_SELECTOR);
     if (!firstRow) return null;
     filterBar = document.createElement('div');
-    filterBar.className = 'github-show-reviewer-filter pl-3';
+    filterBar.className = 'github-show-reviewer-filter';
     filterBar.style.display = 'none';
     firstRow.parentNode.insertBefore(filterBar, firstRow);
 
