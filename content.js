@@ -524,12 +524,12 @@
       const countBadge = `<span class="reviewer-filter-count">${pendingCount > 99 ? '99+' : pendingCount}</span>`;
 
       if (reviewer.isTeam) {
-        htmlContent += `<button class="reviewer-filter-team tooltipped tooltipped-s${isActive ? ' reviewer-filter-team--active' : ''}" aria-label="@${reviewer.login}">
+        htmlContent += `<button class="reviewer-filter-team${isActive ? ' reviewer-filter-team--active' : ''}" aria-label="@${reviewer.login}">
           ${TEAM_ICON}${countBadge}
         </button>`;
       } else {
         const avatarUrl = reviewer.avatarUrl || `https://github.com/${reviewer.login}.png?size=40`;
-        htmlContent += `<button class="reviewer-filter-avatar tooltipped tooltipped-s${isActive ? ' reviewer-filter-avatar--active' : ''}" aria-label="${reviewer.login}">
+        htmlContent += `<button class="reviewer-filter-avatar${isActive ? ' reviewer-filter-avatar--active' : ''}" aria-label="${reviewer.login}">
           <img src="${avatarUrl}" alt="${reviewer.login}" loading="lazy">${countBadge}
         </button>`;
       }
