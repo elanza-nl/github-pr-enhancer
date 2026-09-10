@@ -32,6 +32,13 @@ A Chromium extension that displays reviewers directly in the GitHub PR page, and
 3. Enable "Developer mode" in the top right corner.
 4. Click "Load unpacked" and select the extension directory.
 
+## Updating
+
+1. Pull the latest changes in your local clone: `git pull`.
+2. Open Chrome and navigate to `chrome://extensions`.
+3. Find "GitHub PR Enhancer" and click the reload icon on its card.
+4. Reload any open GitHub PR tabs.
+
 ## Configuration
 
 For private repositories or to increase API rate limits, you need to configure your GitHub Personal Access Token.

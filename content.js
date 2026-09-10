@@ -15,7 +15,7 @@
 
   let repoInfo = checkAndGetRepoInfo();
   let rowPromises = new WeakMap();
-  const ROW_SELECTOR = '.js-issue-row';
+  const ROW_SELECTOR = '.js-issue-row, [class*="PullsListItem-module__listItem"]';
   const SPAN_CLASS = 'github-show-reviewer';
   let currentUrl = window.location.href;
   let observer = null;
@@ -49,7 +49,7 @@
 
   // Create and return span element for displaying reviewer info in PR row
   function ensureInfoSpan(row) {
-    const metaContainer = row.querySelector('.d-flex.mt-1.text-small.color-fg-muted');
+    const metaContainer = row.querySelector('.d-flex.mt-1.text-small.color-fg-muted, [class*="Description-module__container"]');
     if (!metaContainer) {
       return null;
     }
@@ -94,7 +94,7 @@
     }
 
     // Fallback: extract from PR link
-    const link = row.querySelector('a.Link--primary[href*="/pull/"]');
+    const link = row.querySelector('a.Link--primary[href*="/pull/"], a[data-testid="listitem-title-link"]');
     if (link) {
       const match = link.getAttribute('href').match(/\/pull\/(\d+)/);
       if (match) {
@@ -458,7 +458,10 @@
     filterBar = document.createElement('div');
     filterBar.className = 'github-show-reviewer-filter';
     filterBar.style.display = 'none';
-    firstRow.parentNode.insertBefore(filterBar, firstRow);
+    // On the new list view rows live in a React-managed <ul>; insert the bar
+    // before the list itself so React never reconciles it away.
+    const listRoot = firstRow.closest('ul[data-listview-component="items-list"]') || firstRow;
+    listRoot.parentNode.insertBefore(filterBar, listRoot);
 
     filterBar.addEventListener('click', (e) => {
       const el = e.target.closest('[aria-label]');
