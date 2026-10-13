@@ -15,11 +15,14 @@
 
   let repoInfo = checkAndGetRepoInfo();
   let rowPromises = new WeakMap();
-  const ROW_SELECTOR = '.js-issue-row, [class*="PullsListItem-module__listItem"]';
+  // New list view uses hashed class names that change between deploys, so
+  // anchor on GitHub's data-* attributes instead.
+  const ROW_SELECTOR = '.js-issue-row, ul[data-listview-component="items-list"] > li';
   const SPAN_CLASS = 'github-show-reviewer';
   let currentUrl = window.location.href;
   let observer = null;
   let rowReviewerData = new WeakMap();
+  let rowHtml = new WeakMap();
   let allReviewers = new Map();
   let activeFilter = null;
   let filterBar = null;
@@ -49,7 +52,8 @@
 
   // Create and return span element for displaying reviewer info in PR row
   function ensureInfoSpan(row) {
-    const metaContainer = row.querySelector('.d-flex.mt-1.text-small.color-fg-muted, [class*="Description-module__container"]');
+    const metaContainer = row.querySelector('.d-flex.mt-1.text-small.color-fg-muted')
+      || row.querySelector('[data-testid="timestamp-container"]')?.parentElement;
     if (!metaContainer) {
       return null;
     }
@@ -398,8 +402,9 @@
         return;
       }
 
-      const deploymentBadgesHtml = formatDeploymentBadges(deployments);
-      setSpanText(infoSpan, deploymentBadgesHtml + formatReviewerAvatars(reviewers), false);
+      const html = formatDeploymentBadges(deployments) + formatReviewerAvatars(reviewers);
+      setSpanText(infoSpan, html, false);
+      rowHtml.set(row, html);
       infoSpan.removeAttribute('title');
       rowReviewerData.set(row, reviewers);
       let barChanged = false;
@@ -416,6 +421,21 @@
     promise.finally(() => {
       if (rowPromises.get(row) === promise) {
         rowPromises.delete(row);
+      }
+    });
+  }
+
+  // React may re-render a row's metadata (e.g. when deferred review/status
+  // skeletons resolve) and drop our span; put it back from cached HTML.
+  function restoreMissingSpans() {
+    document.querySelectorAll(ROW_SELECTOR).forEach((row) => {
+      const html = rowHtml.get(row);
+      if (!html || row.querySelector(`.${SPAN_CLASS}`)) {
+        return;
+      }
+      const infoSpan = ensureInfoSpan(row);
+      if (infoSpan) {
+        setSpanText(infoSpan, html, false);
       }
     });
   }
@@ -612,6 +632,7 @@
             }
           });
         }
+        restoreMissingSpans();
       });
       observer.observe(document.body, { childList: true, subtree: true });
     }
