@@ -120,7 +120,7 @@
 
     const avatarElements = visibleReviewers.map((reviewer) => {
       if (reviewer.isTeam) {
-        return `<span class="reviewer-team-badge tooltipped tooltipped-s" aria-label="@${reviewer.login}" data-login="${reviewer.login}" data-is-team="true">
+        return `<span class="reviewer-team-badge" aria-label="@${reviewer.login}" data-login="${reviewer.login}" data-is-team="true">
           ${TEAM_ICON} <span class="team-name">@${reviewer.login}</span>
         </span>`;
       } else {
@@ -132,7 +132,7 @@
         const stateLabel = reviewer.state === 'APPROVED' ? ' (approved)'
           : reviewer.state === 'CHANGES_REQUESTED' ? ' (changes requested)'
           : '';
-        return `<span class="reviewer-avatar-link${stateClass} tooltipped tooltipped-s" aria-label="${reviewer.login}${stateLabel}" data-login="${reviewer.login}" data-type="${reviewer.type}">
+        return `<span class="reviewer-avatar-link${stateClass}" aria-label="${reviewer.login}${stateLabel}" data-login="${reviewer.login}" data-type="${reviewer.type}">
           <img src="${avatarUrl}" alt="${reviewer.login}" class="reviewer-avatar" loading="lazy" />
         </span>`;
       }
@@ -263,7 +263,7 @@
         tooltip = `${deployment.environment}: ${deployment.state} (${formatRelativeTime(deployment.deployedAt)})`;
       }
 
-      return `<span class="deployment-badge ${stateClass} tooltipped tooltipped-s" aria-label="${tooltip}">${abbrevName}</span>`;
+      return `<span class="deployment-badge ${stateClass}" aria-label="${tooltip}">${abbrevName}</span>`;
     });
 
     return `<span class="reviewer-separator">•</span><span class="deployment-badges-container">${badges.join('')}</span>`;
@@ -710,6 +710,24 @@
       tooltip.classList.remove('visible');
     }
   }
+
+  // Row avatars/badges use the custom tooltip too: GitHub's CSS tooltips render
+  // inside the row and get covered by the next PR in the list.
+  const ROW_TOOLTIP_SELECTOR = `.${SPAN_CLASS} [aria-label]`;
+
+  document.addEventListener('mouseenter', (e) => {
+    const el = e.target;
+    if (el instanceof Element && el.matches(ROW_TOOLTIP_SELECTOR)) {
+      showTooltip(el, el.getAttribute('aria-label'));
+    }
+  }, true);
+
+  document.addEventListener('mouseleave', (e) => {
+    const el = e.target;
+    if (el instanceof Element && el.matches(ROW_TOOLTIP_SELECTOR)) {
+      hideTooltip();
+    }
+  }, true);
   
 
 })();
